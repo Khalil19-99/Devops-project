@@ -1,0 +1,2 @@
+app_path: /opt/app
+docker_compose_path: ../../app/docker-compose.yaml

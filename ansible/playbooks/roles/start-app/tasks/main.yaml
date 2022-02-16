@@ -1,0 +1,6 @@
+- name: Reset the connection to allow the user group to apply
+  meta: reset_connection
+
+- name: Create and start the service
+  community.docker.docker_compose:
+    project_src: "{{ app_path }}"

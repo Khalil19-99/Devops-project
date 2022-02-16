@@ -1,0 +1,50 @@
+- name: Update
+  hosts: app_servers
+  remote_user: ubuntu
+  become: yes
+  tasks:
+    - name: Update repositories cache
+      ansible.builtin.apt:
+        update_cache: yes
+      
+    - name: Install Pip and the `docker` Python package
+      include_role:
+        name: geerlingguy.pip
+      vars:
+        pip_install_packages:
+          - docker
+          - docker-compose
+
+- name: Install Docker and Docker Compose
+  hosts: app_servers
+  remote_user: ubuntu
+  roles:
+    - role: geerlingguy.docker
+      vars:
+        docker_package_state: present
+        docker_service_state: started
+        docker_service_enabled: yes
+        docker_users:
+          - ubuntu
+        docker_install_compose: yes
+        docker_compose_version: "1.29.2"
+      become: yes
+      
+- name: Configure https certificate
+  hosts: app_servers
+  remote_user: ubuntu
+  roles:
+    - role: generate-certificate
+      
+- name: Copy the Docker Compose file to the image
+  hosts: app_servers
+  remote_user: ubuntu
+  become: yes
+  roles:
+    - role: copy-app
+
+- name: Start the application
+  hosts: app_servers
+  remote_user: ubuntu
+  roles: 
+    - role: start-app

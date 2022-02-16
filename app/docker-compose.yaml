@@ -1,0 +1,7 @@
+version: "3"
+services:
+  app_python:
+    image: mkhalil99/app:latest
+    ports: [443:8000]
+    volumes:
+      - /home/ubuntu/ssl:/home/runner/ssl
